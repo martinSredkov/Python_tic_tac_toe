@@ -1,4 +1,4 @@
-def print_field(matrix):
+def print_matrix(matrix):
     for line in matrix:
         print(line)
 
@@ -48,22 +48,43 @@ def is_player_winner(matrix):
         return True
 
 field = []
-field_size = int(input("Please enter field size:\n"))
+field_size = input("Please enter field size:\n")
+#field size validation
+is_size_valid = False
+while not is_size_valid:
+    try:
+        field_size = int(field_size)
+        if field_size > 1:
+            break
+        else:
+            field_size = input("Please enter valid field size:\n")
+    except ValueError:
+        field_size = input("Please enter valid field size:\n")
+
+
+
+
 for i in range(field_size):
     field.append([])
     for _ in range(field_size):
         field[i].append("*")
+
 while True:
     player_one_turn = True
     while player_one_turn:
-        print_field(field)
-        player_one_move = input("Player one, please enter coordinates for your move:\n")
-        if not is_move_valid(player_one_move, field_size):
+        print_matrix(field)
+        try:
+            player_one_move = input("Player one, please enter coordinates for your move:\n")
+            if not is_move_valid(player_one_move, field_size):
+                print("Invalid move, please enter unoccupied coordinates within the field: \n")
+                continue
+            row, col = int(player_one_move.split(" ")[0]) - 1, int(player_one_move.split(" ")[1]) - 1
+            field[row][col] = "X"
+            player_one_turn = False
+        except IndexError:
             print("Invalid move, please enter unoccupied coordinates within the field: \n")
-            continue
-        row, col = int(player_one_move.split(" ")[0]) - 1, int(player_one_move.split(" ")[1]) - 1
-        field[row][col] = "X"
-        player_one_turn = False
+        except ValueError:
+            print("Invalid move, please enter unoccupied coordinates within the field: \n")
 
     if is_player_winner(field):
         exit("Player one is winner.")
@@ -71,14 +92,19 @@ while True:
         exit("Result is draw")
 
     while not player_one_turn:
-        print_field(field)
-        player_two_move = input("Player two, please enter coordinates for your move:\n")
-        if not is_move_valid(player_two_move, field_size):
+        print_matrix(field)
+        try:
+            player_two_move = input("Player two, please enter coordinates for your move:\n")
+            if not is_move_valid(player_two_move, field_size):
+                print("Invalid move, please enter unoccupied coordinates within the field: \n")
+                continue
+            row, col = int(player_two_move.split(" ")[0]) - 1, int(player_two_move.split(" ")[1]) - 1
+            field[row][col] = "O"
+            player_one_turn = True
+        except IndexError:
             print("Invalid move, please enter unoccupied coordinates within the field: \n")
-            continue
-        row, col = int(player_two_move.split(" ")[0]) - 1, int(player_two_move.split(" ")[1]) - 1
-        field[row][col] = "O"
-        player_one_turn = True
+        except ValueError:
+            print("Invalid move, please enter unoccupied coordinates within the field: \n")
 
     if is_player_winner(field):
         exit("Player two is winner.")
